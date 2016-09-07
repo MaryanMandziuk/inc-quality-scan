@@ -5,14 +5,16 @@
  */
 package inc.quality;
 
+import java.awt.Color;
+
 /**
  *
  * @author maryan
  */
 public class Utils {
     
-    public static int LOCALDIMENSION = 13;
-    
+    public static int LOCALDIMENSION = 29;
+    private static final int K = 60;
     public static int[][] SAT(int[][] pixels) {
         int h = pixels[0].length;
         int w = pixels.length;
@@ -86,5 +88,30 @@ public class Utils {
             res = 255;
         }
         return res;
+    }
+    
+    public static void contrastUp(int[][] map, int[][] pixels) {
+        int h = map[0].length;
+        int w = map.length;
+        Noise n = new Noise(pixels);
+        
+        int constant = n.getNoiseThreshold();
+//        System.out.println(constant);
+         for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; j++) {
+
+                    int t = map[i][j] - constant;
+                   
+                    int tmp = K*(pixels[i][j] - t)  + t;
+                    if (tmp < 0) {
+                        tmp = 0;
+                    } else if (tmp > 255) {
+                        tmp = 255;
+                    }
+
+                    pixels[i][j] = tmp;
+                    
+            }
+        }
     }
 }

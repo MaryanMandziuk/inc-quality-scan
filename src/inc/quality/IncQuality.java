@@ -6,8 +6,8 @@
 package inc.quality;
 
 import static inc.quality.Utils.SAT;
+import static inc.quality.Utils.contrastUp;
 import static inc.quality.Utils.mapThresholdArray;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -45,18 +45,16 @@ public class IncQuality {
                     int b = (rgb & 0xFF);
 
                     pixels[i][j] = (r + g + b) / 3;
-//                    System.out.println(pixels[i][j]);
-
-                  
                 }
             }
          
          sat = SAT(pixels);
          map = mapThresholdArray( sat);
+         contrastUp(map, pixels);
          
          for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    int c = map[i][j];
+                    int c = pixels[i][j];
                     if (c > 255 || c < 0) {
                         System.err.println(c);
                     }
@@ -65,9 +63,9 @@ public class IncQuality {
 
                   
                 }
-            }
-         System.out.println(5/4);
+            }         
         ImageIO.write(pixelImage, "png", new File( "test.png"));
+
     }
     
 }
