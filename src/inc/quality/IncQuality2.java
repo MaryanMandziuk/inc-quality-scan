@@ -5,6 +5,9 @@
  */
 package inc.quality;
 
+import static inc.quality.Utils.averageMinMax;
+import static inc.quality.Utils.bilinearInterpolation;
+import static inc.quality.Utils.checkNoiseThreshold;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +25,10 @@ public class IncQuality2 {
         
         int width = image.getWidth();
         int  height = image.getHeight();
-        BufferedImage pixelImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); 
+        
         int[][] pixels = new int[width][height];
 
-        
+        System.out.println(width + " " + height);
         
         
          for (int i = 0; i < width; i++) {
@@ -47,6 +50,46 @@ public class IncQuality2 {
 //        for(Layer i: pyramid.list) {
 //            System.out.println(i.getAverage()[0].length);
 //        }
+
+
+        int noise = new Noise(pixels).getNoiseThreshold();
+        int[][] map = pyramid.list.get(pyramid.list.size()-1).getAverage();
+        
+        for(int i = pyramid.list.size() - 2; i >= 0; i --) {
+            map = bilinearInterpolation(map.length, map[0].length, map);
+            int[][] tt = averageMinMax(pyramid.list.get(i).getMin(), 
+                    pyramid.list.get(i).getMax());
+            if (i > 0)
+            for (int ii = 0; ii < tt.length; ii++) {
+                for (int j = 0; j < tt[0].length; j++) {
+                    if(tt[ii][j] > noise) {
+                        map[ii][j] = (pyramid.list.get(i).getMax()[ii][j]
+                                +pyramid.list.get(i).getMin()[ii][j])/2;
+                    }
+//                     System.out.println(tt[ii][j]);
+                }
+            }      
+            
+//            if ( checkNoiseThreshold(averageMinMax(pyramid.list.get(i).getMax(), 
+//                    pyramid.list.get(i).getMin()), noise ) ) {
+//                map = pyramid.list.get(i).getAverage();
+//            }
+        }
+        System.out.println(map.length + " " + map[0].length);
+        BufferedImage pixelImage = new BufferedImage(map.length, map[0].length, BufferedImage.TYPE_INT_RGB); 
+        for (int i = 0; i < map.length; i++) {
+                for (int j = 0; j < map[0].length; j++) {
+                    int c = map[i][j];
+                    if (c > 255 || c < 0) {
+                        System.err.println(c);
+                    }
+                    
+                    pixelImage.setRGB(i, j, c + (c << 8 ) + (c <<16));
+
+                  
+                }
+            }         
+        ImageIO.write(pixelImage, "png", new File( "test_map.png"));
 
 
     }
