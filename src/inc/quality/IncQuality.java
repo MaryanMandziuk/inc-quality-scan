@@ -24,7 +24,7 @@ public class IncQuality {
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        File im = new File("images/test3.jpg");
+        File im = new File("images/test.jpg");
         BufferedImage image = ImageIO.read(im);
         
         int width = image.getWidth();
@@ -49,7 +49,7 @@ public class IncQuality {
             }
          
          sat = SAT(pixels);
-         map = mapThresholdArray( sat);
+         map = mapThresholdArray(sat);
          contrastUp(map, pixels);
          
          for (int i = 0; i < width; i++) {

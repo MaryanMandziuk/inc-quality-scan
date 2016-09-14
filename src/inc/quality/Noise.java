@@ -19,7 +19,7 @@ public class Noise {
     private final int[][] pixels;
     public static int BLOCKSIZE = 32;
     public Map<Double, Double> map = new TreeMap<Double, Double>();
-    private static final int NOISE_CONSTANT = 9;
+    private static final int NOISE_CONSTANT = 5;
     
     public Noise(int[][] pixels) {
         this.pixels = pixels;

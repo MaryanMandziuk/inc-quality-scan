@@ -19,21 +19,24 @@ class Layer {
         int w = pixels.length;
         int s_h = h/2;
         int s_w = w/2;
-        if (s_h%2 != 0) {
-            s_h = s_h+1; 
-        }
-        if (s_w%2 != 0) {
-            s_w = s_w +1 ;
-        }
+//        if (s_h%2 != 0) {
+//            s_h = s_h+1; 
+//        }
+//        if (s_w%2 != 0) {
+//            s_w = s_w +1 ;
+//        }
         int mint[][] = new int[s_w][s_h];
         int maxt[][] = new int[s_w][s_h];
         int averaget[][] = new int[s_w][s_h];
-//        System.out.println(s_w + " " + s_h);
         for (int i = 0; i < w; i += 2) {
             for (int j = 0; j < h; j += 2) {
-               mint[i/2][j/2] = getMinValue(i,j, pixels);
-               maxt[i/2][j/2] = getMaxValue(i,j, pixels);
-               averaget[i/2][j/2] = getAverageValue(i, j, pixels);
+                try {
+                    mint[i/2][j/2] = getMinValue(i,j, pixels);
+                    maxt[i/2][j/2] = getMaxValue(i,j, pixels);
+                    averaget[i/2][j/2] = getAverageValue(i, j, pixels);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    continue;
+                }
             }
         }
 
@@ -108,6 +111,8 @@ class Layer {
  */
 public class Pyramid {
     public List<Layer> list = new ArrayList<>();
+    public List<Integer> lenWidth = new ArrayList<>();
+    public List<Integer> lenHight = new ArrayList<>();
     public int[][] pixels;
     Pyramid(int[][] pixels) {
         this.pixels = pixels;
@@ -116,13 +121,17 @@ public class Pyramid {
     public void proccessPyramid() {
         Layer layer = new Layer(this.pixels);
         int len = layer.getAverage().length;
-        list.add(layer);
+        lenWidth.add(this.pixels.length);
+        lenHight.add(this.pixels[0].length);
         while (len > 2) {   
-            layer = new Layer(layer.getAverage());
+            
             list.add(layer);
+            
+            layer = new Layer(layer.getAverage());
             len = layer.getAverage().length > layer.getAverage()[0].length 
                     ? layer.getAverage()[0].length : layer.getAverage().length;
-
+            lenWidth.add(layer.getAverage().length);
+            lenHight.add(layer.getAverage()[0].length );
         }
     }
 }

@@ -115,9 +115,9 @@ public class Utils {
         }
     }
     
-    public static int[][] bilinearInterpolation(int w, int h, int[][] pixels) {
-        int new_w = w * 2;
-        int new_h = h * 2;
+    public static int[][] bilinearInterpolation(int w, int h, int[][] pixels, int w1, int h1) {
+        int new_w = w1;
+        int new_h = h1;
         int A, B, C, D;
         int[][] newPixels = new int[new_w][new_h];
         double tmp, diff_w, diff_h;

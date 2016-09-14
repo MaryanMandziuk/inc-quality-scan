@@ -8,6 +8,7 @@ package inc.quality;
 import static inc.quality.Utils.bilinearInterpolation;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 
 /**
  *
@@ -53,15 +54,10 @@ public class UtilsNGTest {
             {1,2,1,0},
             {1,1,0,2},
                             };
-        int[][] expResult = {
-            {2,3,3,3},
-            {2,4,6,6},
-            {3,7,10,10},
-            {4,9,12,14},
-                            };
-        int[][] result = Utils.mapThresholdArray(pixels);
+        int expResult = 0;
+        int result = Utils.getLocalAverageValue(pixels,0,0);
       
-//        assertEquals(result, expResult);
+        assertEquals(expResult, result);
 
     }
     
@@ -69,21 +65,18 @@ public class UtilsNGTest {
     public void testBilinearInterpolation() {
         System.out.println("bilinearInterpolation");
         int[][] pixels = {
-            {60,20,3},
-            {80,30,3},
-            {80,30,3},
-            {80,30,3},
+            {60,20,},
+            {80,30,},
+
+        };
+        int[][] expected = {
+            {60,70,80,},
+            {40,47,55,},
+            {20,25,30,},
         };
         int h = pixels[0].length;
         int w = pixels.length;
-        int[][] b = new int[w*2][h*2];
-        b = bilinearInterpolation(w,h,pixels);
-//        for (int i = 0; i < w*2; i ++) {
-//            for (int j = 0; j < h*2; j++) {
-//                System.out.print(b[i][j]+ " ");
-//            }
-//            System.out.println("\n");
-//        }
+        assertArrayEquals( expected, bilinearInterpolation(w,h,pixels,3,3));
     }
     
 }
