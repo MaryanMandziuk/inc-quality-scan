@@ -76,7 +76,7 @@ public class UtilsNGTest {
         };
         int h = pixels[0].length;
         int w = pixels.length;
-        assertArrayEquals( expected, bilinearInterpolation(w,h,pixels,3,3));
+        assertArrayEquals(expected, bilinearInterpolation(w,h,pixels,3,3));
     }
     
 }

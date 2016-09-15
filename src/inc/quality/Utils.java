@@ -5,46 +5,52 @@
  */
 package inc.quality;
 
-import java.awt.Color;
-
 /**
  *
  * @author maryan
  */
-public class Utils {
+class Utils {
     
-    public static int LOCALDIMENSION = 29;
+    private static final int LOCALDIMENSION = 29;
     private static final int K = 60;
-    public static int[][] SAT(int[][] pixels) {
+    
+    /**
+     * 
+     * @param pixels
+     * @return 
+     */
+    public static int[][] SAT(final int[][] pixels) {
         int h = pixels[0].length;
         int w = pixels.length;
         int[][] tmp = new int[w][h];
         
-        
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (j > 0) {
-                    tmp[i][j] = pixels[i][j] + tmp[i][j-1];
+                    tmp[i][j] = pixels[i][j] + tmp[i][j - 1];
                 } else {
                     tmp[i][j] = pixels[i][j];
                 }
-
             }
         }
          
-        
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
-                if (j > 0)
-                    tmp[j][i] += tmp[j-1][i];
+                if (j > 0) {
+                    tmp[j][i] += tmp[j - 1][i];
+                }
             }
         }
-        
         
         return tmp;
     }
     
-    public static int[][] mapThresholdArray(int[][] sat) {
+    /**
+     * 
+     * @param sat
+     * @return 
+     */
+    public static int[][] mapThresholdArray(final int[][] sat) {
         int h = sat[0].length;
         int w = sat.length;
         int[][] tmp = new int[w][h];
@@ -52,14 +58,19 @@ public class Utils {
                 for (int j = 0; j < h; j++) {
                     tmp[i][j] = getLocalAverageValue(sat, i, j);
             }
-        }
-         
+        } 
         return tmp;
     }
     
-    
-    public static int getLocalAverageValue(int[][] sat, int i, int j) {
-        int offset = LOCALDIMENSION / 2 ;
+    /**
+     * 
+     * @param sat
+     * @param i
+     * @param j
+     * @return 
+     */
+    public static int getLocalAverageValue(final int[][] sat, final int i, final int j) {
+        int offset = LOCALDIMENSION / 2;
         int A,B,C,D;
         try {
             A = sat[i - offset - 1][j - offset - 1];
@@ -82,7 +93,7 @@ public class Utils {
             D = 0;
         }
         int res = (D + A - B - C) / (LOCALDIMENSION * LOCALDIMENSION);
-        if (res < 0 ) {
+        if (res < 0) {
             res = 0;
         } else if (res > 255) {
             res = 255;
@@ -90,50 +101,60 @@ public class Utils {
         return res;
     }
     
-    public static void contrastUp(int[][] map, int[][] pixels) {
+    /**
+     * 
+     * @param map
+     * @param pixels 
+     */
+    public static void contrastUp(final int[][] map, int[][] pixels) {
         int h = map[0].length;
         int w = map.length;
         Noise n = new Noise(pixels);
         
         int constant = n.getNoiseThreshold();
-//        System.out.println(constant);
-         for (int i = 0; i < w; i++) {
-                for (int j = 0; j < h; j++) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
 
-                    int t = map[i][j] - constant;
-                   
-                    int tmp = K*(pixels[i][j] - t)  + t;
-                    if (tmp < 0) {
-                        tmp = 0;
-                    } else if (tmp > 255) {
-                        tmp = 255;
-                    }
+                int t = map[i][j] - constant;
 
-                    pixels[i][j] = tmp;
-                    
+                int tmp = K * (pixels[i][j] - t) + t;
+                if (tmp < 0) {
+                    tmp = 0;
+                } else if (tmp > 255) {
+                    tmp = 255;
+                }
+                pixels[i][j] = tmp;        
             }
         }
     }
     
-    public static int[][] bilinearInterpolation(int w, int h, int[][] pixels, int w1, int h1) {
-        int new_w = w1;
-        int new_h = h1;
+    /**
+     * Resizing input image's pixels 
+     * @param w - current width
+     * @param h - current height
+     * @param pixels
+     * @param w1 - new width
+     * @param h1 - new height
+     * @return pixels with new dimension
+     */
+    public static int[][] bilinearInterpolation(final int w, final int h,
+                            final int[][] pixels, final int w1, final int h1) {
         int A, B, C, D;
-        int[][] newPixels = new int[new_w][new_h];
-        double tmp, diff_w, diff_h;
+        int[][] newPixels = new int[w1][h1];
+        double tmp, diffW, diffH;
         int h2, w2;
-        for (int j = 0; j < new_h; j++) {
-            tmp = j * ((double) (h-1) / (new_h-1));
+        for (int j = 0; j < h1; j++) {
+            tmp = j * ((double) (h - 1) / (h1 - 1));
             h2 = (int) tmp;
-            if (h2 < 0 ) {
+            if (h2 < 0) {
                 h2 = 0;
             } else {
                 if (h2 >= h - 1) {
                     h2 = h - 2; 
                 }
             }
-            for (int i = 0; i < new_w; i++) {
-                tmp = i * ((double)(w-1) / (new_w-1));
+            for (int i = 0; i < w1; i++) {
+                tmp = i * ((double)(w - 1) / (w1 - 1));
                 w2 = (int) tmp;
                 if (w2 < 0) {
                     w2 = 0;
@@ -142,37 +163,47 @@ public class Utils {
                         w2 = w -2;
                     }
                 }
-                diff_h = (j * ((double) (h-1) / (new_h-1))) - h2;
-                diff_w = tmp - w2;
-//                System.out.println("h=" + diff_h + " w=" + diff_w);
+                diffH = (j * ((double) (h - 1) / (h1 - 1))) - h2;
+                diffW = tmp - w2;
+
                 A = pixels[w2][h2];
                 B = pixels[w2][h2 + 1];
                 C = pixels[w2 + 1][h2];
                 D = pixels[w2 + 1][h2 + 1];
                 
                 
-                newPixels[i][j] = (int) (A *(1-diff_w)*(1-diff_h) + B*diff_w*(1-diff_h) +
-                        C*(1-diff_w)*diff_h + D*diff_w*diff_h);
+                newPixels[i][j] = (int) (A * (1 - diffW) * (1 - diffH) 
+                        + B * diffW * (1 - diffH) + C * (1 - diffW) * diffH 
+                        + D * diffW * diffH);
             }
         }
-
-        
         return newPixels;
     }
     
+    /**
+     * 
+     * @param pixelsMin
+     * @param pixelsMax
+     * @return 
+     */
     public static int[][] averageMinMax(int[][] pixelsMin, int[][] pixelsMax) {
         int h = pixelsMin[0].length;
         int w = pixelsMin.length;
         int[][] tmp = new int[w][h];
-         for (int i = 0; i < w; i++) {
-                for (int j = 0; j < h; j++) {
-                    tmp[i][j] = pixelsMax[i][j] - pixelsMin[i][j];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                tmp[i][j] = pixelsMax[i][j] - pixelsMin[i][j];
             }
-        }
-         
+        } 
         return tmp;
     }
     
+    /**
+     * 
+     * @param pixels
+     * @param noiseThreshold
+     * @return 
+     */
     public static boolean checkNoiseThreshold(int[][] pixels, int noiseThreshold) {
         int h = pixels[0].length;
         int w = pixels.length;
@@ -183,7 +214,6 @@ public class Utils {
                 }
             }
         }
-         
         return false;
-    } 
+    }
 }
