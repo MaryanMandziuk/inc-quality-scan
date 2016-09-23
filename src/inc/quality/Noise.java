@@ -19,10 +19,18 @@ public class Noise {
     private final int[][] pixels;
     private static final int BLOCKSIZE = 32;
     private Map<Double, Double> map = new TreeMap<>();
-    private static final int NOISE_THRESHOLD_CONSTANT = 9;
+    private int noiseMultiplier = 9;
     
     public Noise(int[][] pixels) {
         this.pixels = pixels.clone();
+    }
+    
+    /**
+     * 
+     * @param noiseMultiplier 
+     */
+    public void setNoiseMultiplier(int noiseMultiplier) {
+        this.noiseMultiplier = noiseMultiplier;
     }
     
     /**
@@ -76,9 +84,9 @@ public class Noise {
         int h = pixels[0].length;
         int w = pixels.length;
         final int rangeAvarage = 10;
-        
-        for (int x = 0; x < w; x += BLOCKSIZE) {
-            for (int y = 0; y < h; y += BLOCKSIZE) {
+        int step = BLOCKSIZE / 2; //  overlapping square area
+        for (int x = 0; x < w; x += step) {  
+            for (int y = 0; y < h; y += step) { 
                 double mean = getMean(x, y);
                 map.put(mean, getVariance(x, y, mean));
             }
@@ -113,7 +121,7 @@ public class Noise {
      * @return 
      */
     public int getNoiseThreshold() {
-        return (int) (NOISE_THRESHOLD_CONSTANT * getNoise());
+        return (int) (noiseMultiplier * getNoise());
     }
     
 }

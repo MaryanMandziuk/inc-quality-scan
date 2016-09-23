@@ -47,7 +47,9 @@ public class IncQuality {
          
         sat = SAT(pixels);
         map = mapThresholdArray(sat);
-        contrastUp(map, pixels);
+        Noise noise = new Noise(pixels);
+        int n = noise.getNoiseThreshold();
+        contrastUp(map, pixels, 23, n);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {

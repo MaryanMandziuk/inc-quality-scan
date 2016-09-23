@@ -136,11 +136,11 @@ class Layer {
  * @author maryan
  */
 public class Pyramid {
-    public List<Layer> list = new ArrayList<>();
+    public List<Layer> layers = new ArrayList<>();
     public List<Integer> lenWidth = new ArrayList<>();
     public List<Integer> lenHight = new ArrayList<>();
     public final int[][] pixels;
-    Pyramid(final int[][] pixels) {
+    public Pyramid(final int[][] pixels) {
         this.pixels = pixels.clone();
     }
     
@@ -153,7 +153,7 @@ public class Pyramid {
         lenWidth.add(this.pixels.length);
         lenHight.add(this.pixels[0].length);
         while (len > 2) {   
-            list.add(layer);
+            layers.add(layer);
             layer = new Layer(layer.getAverage());
             len = layer.getAverage().length > layer.getAverage()[0].length 
                     ? layer.getAverage()[0].length : layer.getAverage().length;

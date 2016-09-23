@@ -9,7 +9,7 @@ package inc.quality;
  *
  * @author maryan
  */
-class Utils {
+public class Utils {
     
     private static final int LOCALDIMENSION = 29;
     private static final int K = 60;
@@ -105,19 +105,20 @@ class Utils {
      * 
      * @param map
      * @param pixels 
+     * @param contrastLevel 
+     * @param noise 
      */
-    public static void contrastUp(final int[][] map, int[][] pixels) {
+    public static void contrastUp(final int[][] map, int[][] pixels,
+            int contrastLevel, int noise) {
         int h = map[0].length;
         int w = map.length;
-        Noise n = new Noise(pixels);
         
-        int constant = n.getNoiseThreshold();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
 
-                int t = map[i][j] - constant;
+                int t = map[i][j] - noise;
 
-                int tmp = K * (pixels[i][j] - t) + t;
+                int tmp = contrastLevel * (pixels[i][j] - t) + t;
                 if (tmp < 0) {
                     tmp = 0;
                 } else if (tmp > 255) {
@@ -215,5 +216,34 @@ class Utils {
             }
         }
         return false;
+    }
+    
+    public static void applyContrastUP(Pyramid pyramid, int[][] pixels,
+            int noiseMultiplier, int layerStop, int contrastLevel){
+
+        
+        Noise noise = new Noise(pixels);
+        noise.setNoiseMultiplier(noiseMultiplier);
+        int n = noise.getNoiseThreshold();
+        int[][] map = pyramid.layers.get(pyramid.layers.size() - 1).getAverage();
+        for (int i = pyramid.layers.size() - 2; i >= 0; i--) {
+            map = bilinearInterpolation(map.length, map[0].length, map, 
+                    pyramid.lenWidth.get(i), pyramid.lenHight.get(i));
+            int[][] tt = averageMinMax(pyramid.layers.get(i).getMin(), 
+                    pyramid.layers.get(i).getMax());
+            if (i >= layerStop) {
+                for (int ii = 0; ii < tt.length; ii++) {
+                    for (int j = 0; j < tt[0].length; j++) {
+                        if (tt[ii][j] > n) {
+                            map[ii][j] = (pyramid.layers.get(i).getMax()[ii][j]
+                                    + pyramid.layers.get(i).getMin()[ii][j]) / 2;
+    //                        map[ii][j] = pyramid.list.get(i).getAverage()[ii][j];
+                        }
+                    }
+                }       
+            }
+        }
+
+        contrastUp(map, pixels, contrastLevel, n);
     }
 }
