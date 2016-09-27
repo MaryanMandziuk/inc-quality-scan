@@ -19,7 +19,7 @@ public class IncQuality2 {
     public static final int LAYER_STOP = 4;
     
     public static void main(String[] args) throws IOException {
-        File im = new File("images/test8.jpg");
+        File im = new File("images/test6.jpg");
         BufferedImage image = ImageIO.read(im);
         
         int width = image.getWidth();
@@ -43,7 +43,7 @@ public class IncQuality2 {
         Pyramid pyramid = new Pyramid(pixels);
 
         pyramid.proccessPyramid();
-        int noiseMultiplier = 3;
+        int noiseMultiplier = 6;
         int layerStop = 2;
         int contrastLayer =22;
         applyContrastUP(pyramid, pixels, noiseMultiplier,layerStop, contrastLayer);

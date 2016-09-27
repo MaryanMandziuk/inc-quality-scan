@@ -22,7 +22,7 @@ public class Noise {
     private int noiseMultiplier = 9;
     
     public Noise(int[][] pixels) {
-        this.pixels = pixels.clone();
+        this.pixels = pixels;
     }
     
     /**
@@ -47,7 +47,9 @@ public class Noise {
                 try {
                     sum += this.pixels[i][j];
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    count++; break;   
+//                    count++; 
+                    count += ((y + BLOCKSIZE) - j);
+                    break;   
                 }
             }
         }
@@ -69,7 +71,9 @@ public class Noise {
                 try {
                     v += Math.pow(pixels[i][j] - mean, 2);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    count++; break;
+//                    count++;
+                    count += ((y + BLOCKSIZE) - j);
+                    break;
                 }
             }
         }
@@ -103,15 +107,16 @@ public class Noise {
             if (i > b) {
                 i = 0;
                 mins.add(min);
+                min = 255;
             }
         }
+        mins.add(min);
         
         double sum = 0;
-        
         for (Double d: mins) {
             sum += d;
         }
-        
+
         return sum / (double) rangeAvarage;
     }
     

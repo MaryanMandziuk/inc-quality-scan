@@ -221,12 +221,12 @@ public class Utils {
     public static void applyContrastUP(Pyramid pyramid, int[][] pixels,
             int noiseMultiplier, int layerStop, int contrastLevel){
 
-        
+
         Noise noise = new Noise(pixels);
         noise.setNoiseMultiplier(noiseMultiplier);
-        int n = noise.getNoiseThreshold();
+        int n = noise.getNoiseThreshold();       
         int[][] map = pyramid.layers.get(pyramid.layers.size() - 1).getAverage();
-        for (int i = pyramid.layers.size() - 2; i >= 0; i--) {
+        for (int i = pyramid.layers.size() - 2; i >= 0; i--) {            
             map = bilinearInterpolation(map.length, map[0].length, map, 
                     pyramid.lenWidth.get(i), pyramid.lenHight.get(i));
             int[][] tt = averageMinMax(pyramid.layers.get(i).getMin(), 
@@ -243,7 +243,7 @@ public class Utils {
                 }       
             }
         }
-
+       
         contrastUp(map, pixels, contrastLevel, n);
     }
 }
